@@ -1,8 +1,11 @@
 from numpy import *
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+
 # h(x) = y = mx + b
-# m is slope, b is y-intercept
+# m is slope, b is y-intercept or m is theta 1, b is theta 0
+#========================================================================================================================================================
 #Squared error function
+
 def compute_error_for_line_given_points(b, m, points):
     totalError = 0
     for i in range(0, len(points)):
@@ -10,8 +13,10 @@ def compute_error_for_line_given_points(b, m, points):
         y = points[i, 1]
         totalError += (y - (m * x + b)) ** 2
     return totalError / float(2*len(points))
+# ========================================================================================================================================================
 #theta0 = theta0 - eta * (1/n)*sum(h(xi)-y(xi))
 #theta1 = theta1 - eta * (1/n)*sum(h(xi)-y(xi))*xi
+
 def step_gradient(b_current, m_current, points, learningRate):
     b_gradient = 0
     m_gradient = 0
@@ -25,34 +30,44 @@ def step_gradient(b_current, m_current, points, learningRate):
     new_m = m_current - (learningRate * m_gradient) / N
     return [new_b, new_m]
 
-def gradient_descent_runner(points, starting_b, starting_m, learning_rate, num_iterations):
+# ========================================================================================================================================================
+
+def gradient_descent_runner(points, starting_b, starting_m, learning_rate, num_iterations = 3):
+    counter = 0 # counter used for the drawing
     b = starting_b
     m = starting_m
     for i in range(num_iterations):
+# ========================================================================================================================================================
+        #   The drawing staff, we will update it once after each 10 iterations
+        print ("After {0} iterations b = {1}, m = {2}, error = {3}".format(counter, b, m,compute_error_for_line_given_points(b, m, points)))
+        if counter%100 is 0:
+            plt.plot(points[:, 0], points[:, 1], 'bo') # Draw the dataset
+            plt.plot([0, 80], [b, 80*m+b], 'b')
+            plt.show()
+# ========================================================================================================================================================
         b, m = step_gradient(b, m, array(points), learning_rate)
+        counter+=1
     return [b, m]
+
+#========================================================================================================================================================
 
 def Train():
     points = genfromtxt("data.csv", delimiter=",") # Function in Numby that reads the data from a file and organize it.
-    learning_rate = 0.0001
+    learning_rate = 0.000001 # Eta
     initial_b = 0 # initial y-intercept guess
     initial_m = 0 # initial slope guess
-    num_iterations = 1000
+    num_iterations = 2000
+
     print ("Starting gradient descent at b = {0}, m = {1}, error = {2}".format(initial_b, initial_m, compute_error_for_line_given_points(initial_b, initial_m, points)))
     print ("Running...")
     [b, m] = gradient_descent_runner(points, initial_b, initial_m, learning_rate, num_iterations)
     print ("After {0} iterations b = {1}, m = {2}, error = {3}".format(num_iterations, b, m, compute_error_for_line_given_points(b, m, points)))
-def Test():
-    a= input("Enter the X")
 
 #========================================================================================================================================================
 #The Main:
 Train();
-plt.plot([1,2,3,4])
-plt.ylabel('some numbers')
-plt.show()
-while(True):
-    Test();
+
+# ========================================================================================================================================================
 '''
 Some useful resources:
  * Linear regression:
